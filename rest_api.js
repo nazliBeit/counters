@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const app = express();
 
 let counters = new Map();
-
 function map_to_object(map) {
   const out = Object.create(null)
   map.forEach((value, key) => {
@@ -31,6 +30,17 @@ app.put('/counters/:counter',(req, res)=>{
     return;
   }
   counters.set(counter_name,  counters.get(counter_name)+1);
+  res.send(map_to_object(counters));
+});
+
+app.delete('/counters/:counter',(req, res)=>{
+  let counter_name = req.params.counter;
+  if (! counters.has(counter_name)) {
+    res.status(404).send();
+    return;
+  }
+  counters.set(counter_name,  counters.get(counter_name)-1);
+  if (counters.get(counter_name) <= 0) counters.delete(counter_name);
   res.send(map_to_object(counters));
 });
 
